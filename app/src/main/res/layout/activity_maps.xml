@@ -11,17 +11,57 @@
         android:padding="12dp"
         android:background="@android:color/white"
         android:elevation="2dp"
+        android:layout_marginTop="8dp"
         android:layout_margin="8dp"/>
 
-    <!-- Route Button -->
+    <!-- Route Buttons -->
+    <!-- Load Route - Top Left -->
+    <Button
+        android:id="@+id/btnLoadRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load Route"
+        android:layout_below="@id/searchLocation"
+        android:layout_alignParentStart="true"
+        android:layout_margin="8dp" />
+
+    <!-- Generate Route - Top Right -->
     <Button
         android:id="@+id/btnRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Generate Route"
         android:layout_below="@id/searchLocation"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp" />
+
+    <!-- Save Route - Bottom Left -->
+    <Button
+        android:id="@+id/btnSaveRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Route"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="8dp" />
+
+    <!-- Clear Route - Bottom Right -->
+    <Button
+        android:id="@+id/btnClearRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear Route"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/waypointRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_above="@id/map"
         android:layout_margin="8dp"
-        android:layout_alignParentEnd="true" />
+        android:background="#EEEEEE" />
 
     <!-- Map Fragment -->
     <fragment
@@ -29,5 +69,8 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/btnRoute"/>
+        android:layout_below="@id/btnLoadRoute"
+        android:layout_marginTop="8dp" />
 </RelativeLayout>
+
+

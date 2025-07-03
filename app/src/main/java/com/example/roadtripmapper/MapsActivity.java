@@ -33,10 +33,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+import com.google.android.gms.maps.model.Polyline;
+import android.content.SharedPreferences;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private Polyline currentPolyline;
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -100,6 +105,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        Button btnClearRoute = findViewById(R.id.btnClearRoute);
+
+        btnClearRoute.setOnClickListener(v -> {
+            mMap.clear(); // Remove all markers and lines from the map
+            pinList.clear(); // Reset your stored waypoints
+            currentPolyline = null; // Nullify the reference just in case
+            Toast.makeText(this, "Route cleared!", Toast.LENGTH_SHORT).show();
+        });
+
+        Button btnSaveRoute = findViewById(R.id.btnSaveRoute);
+        btnSaveRoute.setOnClickListener(v -> saveRouteToPreferences());
+
+        Button btnLoadRoute = findViewById(R.id.btnLoadRoute);
+        btnLoadRoute.setOnClickListener(v -> loadRouteFromPreferences());
+
+
     }
 
     private void drawRouteBetweenPins(List<LatLng> pinList) {
@@ -153,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     runOnUiThread(() -> {
                         PolylineOptions options = new PolylineOptions().addAll(decodedPoints).width(10).color(Color.BLUE);
-                        mMap.addPolyline(options);
+                        currentPolyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPoints).color(Color.BLUE));
                     });
                 }
             } catch (Exception e) {
@@ -214,4 +235,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(austin).title("Marker in Austin, TX"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 10));
     }
+
+    private void saveRouteToPreferences() {
+        SharedPreferences prefs = getSharedPreferences("MyRoutes", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(pinList);
+
+        editor.putString("saved_route", json);
+        editor.apply();
+
+        Toast.makeText(this, "Route saved!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadRouteFromPreferences() {
+        SharedPreferences prefs = getSharedPreferences("MyRoutes", MODE_PRIVATE);
+        String json = prefs.getString("saved_route", null);
+
+        if (json != null) {
+            Gson gson = new Gson();
+            TypeToken<List<LatLng>> token = new TypeToken<List<LatLng>>() {};
+            List<LatLng> savedPins = gson.fromJson(json, token.getType());
+
+            pinList.clear();
+            pinList.addAll(savedPins);
+
+            for (LatLng pin : pinList) {
+                mMap.addMarker(new MarkerOptions().position(pin));
+            }
+
+            drawRouteBetweenPins(pinList);
+
+            Toast.makeText(this, "Route loaded!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No saved route found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }
