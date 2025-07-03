@@ -1,5 +1,3 @@
-
-
 package com.example.roadtripmapper;
 import android.util.Log;
 import android.location.Address;
@@ -142,6 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 String response = responseBuilder.toString();
+                Log.d("ROUTE_DEBUG", "JSON response: " + response);
                 JSONObject jsonResponse = new JSONObject(response);
                 JSONArray routes = jsonResponse.getJSONArray("routes");
 
